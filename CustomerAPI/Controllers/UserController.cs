@@ -25,6 +25,7 @@ namespace CustomerAPI.Controllers
             setting = options.Value;
         }
 
+        [NonAction]
         public TokenResponse Authenticate(string username, Claim[] claims)
         {
             TokenResponse response = new TokenResponse();

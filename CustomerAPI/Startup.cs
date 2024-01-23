@@ -3,6 +3,7 @@ using CustomerAPI.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using System.Text;
 
 namespace CustomerAPI
@@ -51,6 +52,16 @@ namespace CustomerAPI
                     ValidateAudience = false
                 };
             });
+
+            services.AddSwaggerGen(options =>
+            {
+                options.SwaggerDoc("v1", new OpenApiInfo()
+                {
+                    Description = "Customer API with curd operations",
+                    Title = "Customer",
+                    Version = "1"
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -70,6 +81,18 @@ namespace CustomerAPI
             app.UseAuthentication();
 
             app.UseAuthorization();
+
+            app.UseSwagger();
+
+            app.UseCors(builder =>
+            {
+                builder
+                .AllowAnyOrigin() //.WithOrigins("test.com") // if want for only restricted domain
+                .AllowAnyMethod()
+                .AllowAnyHeader();
+            });
+
+            app.UseSwaggerUI(options => options.SwaggerEndpoint("/swagger/v1/swagger.json", "Customer"));
 
             app.UseEndpoints(endpoints =>
             {
