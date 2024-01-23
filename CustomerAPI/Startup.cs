@@ -1,4 +1,5 @@
 ﻿using CustomerAPI.Models;
+using CustomerAPI.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -24,6 +25,10 @@ namespace CustomerAPI
             services.AddSwaggerGen();
 
             services.AddDbContext<Learn_DBContext>(options => options.UseSqlServer(Configuration.GetConnectionString("constring")));
+
+            var _dbContext = services.BuildServiceProvider().GetService<Learn_DBContext>();
+
+            services.AddSingleton<IRefreshTokenGenerator>(provider => new RefreshTokenGenerator(_dbContext));
 
             var _jwtsetting = Configuration.GetSection("JWTSetting");
             services.Configure<JWTSetting>(_jwtsetting);
